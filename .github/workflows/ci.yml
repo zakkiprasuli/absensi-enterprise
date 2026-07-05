@@ -60,7 +60,7 @@ jobs:
 
       - name: Install Composer dependencies
         working-directory: ./absensi-enterprise/backend-laravel
-        run: composer install --no-dev --optimize-autoloader --no-interaction
+        run: composer install --optimize-autoloader --no-interaction
 
       - name: Setup environment Laravel
         working-directory: ./absensi-enterprise/backend-laravel
