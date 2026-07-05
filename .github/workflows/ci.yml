@@ -8,6 +8,27 @@ on:
 
 jobs:
 
+  test-fastapi:
+    name: Test FastAPI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout kode
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies FastAPI
+        working-directory: ./absensi-enterprise/ai-fastapi
+        run: pip install fastapi uvicorn httpx pytest python-multipart
+
+      - name: Jalankan test FastAPI
+        working-directory: ./absensi-enterprise/ai-fastapi
+        run: pytest test_main.py -v
+
   test-laravel:
     name: Test Laravel API
     runs-on: ubuntu-latest
@@ -17,8 +38,8 @@ jobs:
         image: postgres:16
         env:
           POSTGRES_DB: absensi_test
-          POSTGRES_USER: absensi_user
-          POSTGRES_PASSWORD: absensi_pass
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: secretpassword
         ports:
           - 5432:5432
         options: >-
@@ -38,65 +59,36 @@ jobs:
           extensions: pdo, pdo_pgsql, mbstring, bcmath
 
       - name: Install Composer dependencies
-        working-directory: ./backend-laravel
+        working-directory: ./absensi-enterprise/backend-laravel
         run: composer install --no-dev --optimize-autoloader --no-interaction
 
       - name: Setup environment Laravel
-        working-directory: ./backend-laravel
+        working-directory: ./absensi-enterprise/backend-laravel
         run: |
           cp .env.example .env
           php artisan key:generate
-        env:
-          DB_CONNECTION: pgsql
-          DB_HOST: 127.0.0.1
-          DB_PORT: 5432
-          DB_DATABASE: absensi_test
-          DB_USERNAME: absensi_user
-          DB_PASSWORD: absensi_pass
 
       - name: Jalankan migrasi
-        working-directory: ./backend-laravel
+        working-directory: ./absensi-enterprise/backend-laravel
         run: php artisan migrate --force
         env:
           DB_CONNECTION: pgsql
           DB_HOST: 127.0.0.1
           DB_PORT: 5432
           DB_DATABASE: absensi_test
-          DB_USERNAME: absensi_user
-          DB_PASSWORD: absensi_pass
+          DB_USERNAME: admin
+          DB_PASSWORD: secretpassword
 
       - name: Jalankan test Laravel
-        working-directory: ./backend-laravel
+        working-directory: ./absensi-enterprise/backend-laravel
         run: php artisan test --filter ApiTest
         env:
           DB_CONNECTION: pgsql
           DB_HOST: 127.0.0.1
           DB_PORT: 5432
           DB_DATABASE: absensi_test
-          DB_USERNAME: absensi_user
-          DB_PASSWORD: absensi_pass
-
-  test-fastapi:
-    name: Test FastAPI
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout kode
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-
-      - name: Install dependencies FastAPI (tanpa insightface untuk CI)
-        working-directory: ./fastapi
-        run: |
-          pip install fastapi uvicorn httpx pytest python-multipart
-
-      - name: Jalankan test FastAPI
-        working-directory: ./fastapi
-        run: pytest test_main.py -v
+          DB_USERNAME: admin
+          DB_PASSWORD: secretpassword
 
   build-docker:
     name: Build Docker Images
@@ -108,10 +100,10 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Laravel image
-        run: docker build -t absensi-laravel:${{ github.sha }} ./backend-laravel
+        run: docker build -t absensi-laravel:${{ github.sha }} ./absensi-enterprise/backend-laravel
 
       - name: Build FastAPI image
-        run: docker build -t absensi-fastapi:${{ github.sha }} ./fastapi
+        run: docker build -t absensi-fastapi:${{ github.sha }} ./absensi-enterprise/ai-fastapi
 
       - name: Verifikasi images berhasil dibuat
         run: docker images | grep absensi
