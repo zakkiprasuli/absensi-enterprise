@@ -1,0 +1,28 @@
+# Python virtual environment
+venv/
+env/
+.env
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+
+# Laravel
+vendor/
+node_modules/
+.env
+storage/logs/*
+bootstrap/cache/*
+
+# Flutter
+absensi_mobile/.dart_tool/
+absensi_mobile/build/
+mobile-flutter/.dart_tool/
+mobile-flutter/build/
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
