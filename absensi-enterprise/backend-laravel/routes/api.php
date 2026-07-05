@@ -1,0 +1,18 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\AttendanceController;
+
+// Public: login karyawan
+Route::post('/login', [AuthController::class, 'login']);
+
+// Protected: butuh token Sanctum
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/me', [AuthController::class, 'me']);
+
+    Route::post('/attendances/clock-in', [AttendanceController::class, 'clockIn']);
+    Route::post('/attendances/clock-out', [AttendanceController::class, 'clockOut']);
+    Route::get('/attendances/history', [AttendanceController::class, 'history']);
+});
