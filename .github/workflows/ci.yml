@@ -81,7 +81,7 @@ jobs:
 
       - name: Jalankan test Laravel
         working-directory: ./absensi-enterprise/backend-laravel
-        run: php artisan test --filter ApiTest
+        run: ./vendor/bin/phpunit --filter ApiTest
         env:
           DB_CONNECTION: pgsql
           DB_HOST: 127.0.0.1
