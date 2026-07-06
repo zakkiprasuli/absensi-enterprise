@@ -14,7 +14,7 @@ class ApiTest extends TestCase
         ]);
 
         // Endpoint ada dan merespons (401 = endpoint jalan, bukan 404)
-        $response->assertStatus(999);
+        $response->assertStatus(401);
         $response->assertJson(['status' => 'error']);
     }
 
