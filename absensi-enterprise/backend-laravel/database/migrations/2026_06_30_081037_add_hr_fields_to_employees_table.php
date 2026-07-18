@@ -8,21 +8,12 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::table('employees', function (Blueprint $table) {
-            $table->string('email')->unique()->nullable()->after('name');
-            $table->string('password')->nullable()->after('email');
-            $table->string('phone')->nullable()->after('password');
-            $table->string('position')->nullable()->after('phone');
-            $table->string('department')->nullable()->after('position');
-            $table->date('join_date')->nullable()->after('department');
-            $table->enum('status', ['aktif', 'nonaktif', 'resign'])->default('aktif')->after('join_date');
-        });
+        // Kolom sudah dimasukkan langsung ke create_employees_table
+        // Migration ini dikosongkan untuk menghindari duplikasi di test environment
     }
 
     public function down()
     {
-        Schema::table('employees', function (Blueprint $table) {
-            $table->dropColumn(['email', 'password', 'phone', 'position', 'department', 'join_date', 'status']);
-        });
+        // Tidak ada yang perlu di-rollback
     }
-};  
+};

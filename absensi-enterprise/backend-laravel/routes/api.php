@@ -1,8 +1,26 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AttendanceController;
+
+Route::get('/health', function () {
+    try {
+        DB::connection()->getPdo();
+        $dbStatus = 'connected';
+    } catch (\Exception $e) {
+        $dbStatus = 'disconnected';
+    }
+
+    return response()->json([
+        'status'    => 'healthy',
+        'service'   => 'Laravel Absensi Enterprise',
+        'database'  => $dbStatus,
+        'timestamp' => now(),
+    ]);
+});
+
 
 // Public: login karyawan
 Route::post('/login', [AuthController::class, 'login']);
